@@ -15,6 +15,9 @@ module AffirmHelper
       confirmation_url: spree.confirm_affirm_url(payment_method_id: payment_method.id, order_id: order.id),
       cancel_url: spree.cancel_affirm_url(payment_method_id: payment_method.id, order_id: order.id)
     }
+
+    order.payments.where(source_type: 'SolidusAffirm::Checkout').pending.collect(&:cancel!)
+
     payload = SolidusAffirm::CheckoutPayload.new(order, config, metadata)
     SolidusAffirm::Config.checkout_payload_serializer.new(payload, root: false).to_json
   end
